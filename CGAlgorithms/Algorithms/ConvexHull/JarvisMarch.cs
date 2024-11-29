@@ -11,7 +11,7 @@ namespace CGAlgorithms.Algorithms.ConvexHull
     {
         public int ori(Point a, Point b, Point c)
         {
-            double v = a.X * (b.Y - c.Y) + b.X * (c.Y - a.Y) + c.X * (a.Y - b.Y);
+            long v = (long)a.X * ((long)b.Y - (long)c.Y) + (long)b.X * ((long)c.Y - (long)a.Y) + (long)c.X * ((long)a.Y - (long)b.Y);
             if (v < 0) return -1; // cw
             if (v > 0) return +1; // ccw
             return 0;
@@ -24,8 +24,8 @@ namespace CGAlgorithms.Algorithms.ConvexHull
         {
             points.Sort((a, b) =>
             {
-                if (a.X > b.X || (a.X == b.X && a.Y > b.Y)) return 1;
-                return -1;
+                if (a.X > b.X || (a.X == b.X && a.Y > b.Y)) return -1;
+                return 1;
             });
 
             List<Point> temp = new List<Point>();
@@ -69,6 +69,15 @@ namespace CGAlgorithms.Algorithms.ConvexHull
             }
 
             outPoints.RemoveAt(outPoints.Count - 1);
+
+
+
+            for (int i = 0; i < outPoints.Count; i++)
+            {
+                outLines.Add(new Line(outPoints[i], outPoints[(i + 1) % outPoints.Count]));
+            }
+
+            outPolygons.Add(new Polygon(outLines));
         }
 
         public override string ToString()

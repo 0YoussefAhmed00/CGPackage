@@ -31,7 +31,7 @@ namespace CGAlgorithms.Algorithms.ConvexHull
 
             List<Line> hullLines = new List<Line>();
 
-           
+
             for (int i = 0; i < points_Msh_Mtkrra.Count; i++)
             {
                 for (int j = i + 1; j < points_Msh_Mtkrra.Count; j++)
@@ -62,13 +62,6 @@ namespace CGAlgorithms.Algorithms.ConvexHull
                             isEx_Segment = false;
                             break;
                         }
-
-                        if ((turn == Enums.TurnType.Left && init_tu == Enums.TurnType.Right) ||
-                            (turn == Enums.TurnType.Right && init_tu == Enums.TurnType.Left))
-                        {
-                            isEx_Segment = false;
-                            break;
-                        }
                     }
 
                     if (isEx_Segment)
@@ -86,13 +79,17 @@ namespace CGAlgorithms.Algorithms.ConvexHull
                 hullPoints.Add(line.End);
             }
 
-            
+
             outPoints = new List<Point>(hullPoints);
-            foreach (Point x in hullPoints)
-            {
-                Debug.WriteLine(x.X + " " + x.Y + " ");
-            }
+
+            //foreach (Point x in hullPoints)
+            //{
+            //    Debug.WriteLine(x.X + " " + x.Y + " ");
+            //}
+
             outLines = hullLines;
+
+            outPolygons.Add(new Polygon(outLines));
         }
 
         public override string ToString()

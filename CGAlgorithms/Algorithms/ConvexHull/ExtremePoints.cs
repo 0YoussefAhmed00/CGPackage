@@ -9,6 +9,13 @@ namespace CGAlgorithms.Algorithms.ConvexHull
 {
     public class ExtremePoints : Algorithm
     {
+        public int ori(Point a, Point b, Point c)
+        {
+            long v = (long)a.X * ((long)b.Y - (long)c.Y) + (long)b.X * ((long)c.Y - (long)a.Y) + (long)c.X * ((long)a.Y - (long)b.Y);
+            if (v < 0) return -1; // cw
+            if (v > 0) return +1; // ccw
+            return 0;
+        }
         public override void Run(List<Point> points, List<Line> lines, List<Polygon> polygons, ref List<Point> outPoints, ref List<Line> outLines, ref List<Polygon> outPolygons)
         {
             // shel el mtkrr
@@ -59,10 +66,36 @@ namespace CGAlgorithms.Algorithms.ConvexHull
                 }
             }
 
-     
+
             outPoints = new List<Point>(filtered_points);
 
+            Point p0 = new Point(double.MaxValue, double.MaxValue);
+            for (int i = 0; i < outPoints.Count; i++)
+            {
+                if (p0.Y > outPoints[i].Y || (p0.Y == outPoints[i].Y && p0.X > outPoints[i].X))
+                {
+                    p0 = outPoints[i];
+                }
+            }
 
+            outPoints.Sort((a, b) =>
+            {
+                int o = ori(p0, a, b);
+                if (o == 0)
+                {
+                    double distA = (p0.X - a.X) * (p0.X - a.X) + (p0.Y - a.Y) * (p0.Y - a.Y);
+                    double distB = (p0.X - b.X) * (p0.X - b.X) + (p0.Y - b.Y) * (p0.Y - b.Y);
+                    return distA.CompareTo(distB);
+                }
+                return o < 0 ? -1 : 1;
+            });
+
+            for (int i = 0; i < outPoints.Count; i++)
+            {
+                outLines.Add(new Line(outPoints[i], outPoints[(i + 1) % outPoints.Count]));
+            }
+
+            outPolygons.Add(new Polygon(outLines));
         }
 
         public override string ToString()

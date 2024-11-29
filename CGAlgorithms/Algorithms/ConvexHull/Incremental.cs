@@ -12,7 +12,7 @@ namespace CGAlgorithms.Algorithms.ConvexHull
     {
         public int ori(Point a, Point b, Point c)
         {
-            double v = a.X * (b.Y - c.Y) + b.X * (c.Y - a.Y) + c.X * (a.Y - b.Y);
+            long v = (long)a.X * ((long)b.Y - (long)c.Y) + (long)b.X * ((long)c.Y - (long)a.Y) + (long)c.X * ((long)a.Y - (long)b.Y);
             if (v < 0) return -1; // cw
             if (v > 0) return +1; // ccw
             return 0;
@@ -41,7 +41,11 @@ namespace CGAlgorithms.Algorithms.ConvexHull
                 return;
             }
 
-            points = points.OrderBy(point => point.X).ThenBy(point => point.Y).ToList();
+            points.Sort((a, b) =>
+            {
+                if (a.X > b.X || (a.X == b.X && a.Y > b.Y)) return -1;
+                return 1;
+            });
 
             List<Point> temp = new List<Point>();
             for (int i = 0; i < points.Count; i++)
@@ -58,6 +62,7 @@ namespace CGAlgorithms.Algorithms.ConvexHull
             var stk2 = new List<Point>();
             stk1.Add(pL);
             stk2.Add(pL);
+
             for (int i = 1; i < points.Count; i++)
             {
                 if (i == points.Count - 1 || cw(pL, points[i], pR))
@@ -73,19 +78,26 @@ namespace CGAlgorithms.Algorithms.ConvexHull
                     stk2.Add(points[i]);
                 }
             }
+
             for (int i = 0; i < stk1.Count; i++)
             {
                 outPoints.Add(stk1[i]);
             }
-            for(int i = stk2.Count- 2; i > 0; i--)
+
+            for (int i = stk2.Count - 2; i > 0; i--)
             {
                 outPoints.Add(stk2[i]);
             }
+
             for (int i = 0; i < outPoints.Count; i++)
             {
                 outLines.Add(new Line(outPoints[i], outPoints[(i + 1) % outPoints.Count]));
             }
+
             outPolygons.Add(new Polygon(outLines));
+
+
+
         }
 
         public override string ToString()

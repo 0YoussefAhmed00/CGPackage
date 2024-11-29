@@ -12,7 +12,7 @@ namespace CGAlgorithms.Algorithms.ConvexHull
     {
         public int ori(Point a, Point b, Point c)
         {
-            double v = a.X * (b.Y - c.Y) + b.X * (c.Y - a.Y) + c.X * (a.Y - b.Y);
+            long v = (long)a.X * ((long)b.Y - (long)c.Y) + (long)b.X * ((long)c.Y - (long)a.Y) + (long)c.X * ((long)a.Y - (long)b.Y);
             if (v < 0) return -1; // cw
             if (v > 0) return +1; // ccw
             return 0;

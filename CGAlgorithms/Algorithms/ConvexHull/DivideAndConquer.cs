@@ -14,7 +14,7 @@ namespace CGAlgorithms.Algorithms.ConvexHull
     {
         public int ori(Point a, Point b, Point c)
         {
-            double v = a.X * (b.Y - c.Y) + b.X * (c.Y - a.Y) + c.X * (a.Y - b.Y);
+            long v = (long)a.X * ((long)b.Y - (long)c.Y) + (long)b.X * ((long)c.Y - (long)a.Y) + (long)c.X * ((long)a.Y - (long)b.Y);
             if (v < 0) return -1; // cw
             if (v > 0) return +1; // ccw
             return 0;
@@ -25,13 +25,13 @@ namespace CGAlgorithms.Algorithms.ConvexHull
         }
         public bool cw(Point a, Point b, Point c)
         {
-            if (ori(a, b, c) < 0) return true;
+            if (ori(a, b, c) == -1) return true;
             else if (ori(a, b, c) == 0) return dist(a, c) > dist(a, b);
             return false;
         }
         public bool ccw(Point a, Point b, Point c)
         {
-            if (ori(a, b, c) > 0) return true;
+            if (ori(a, b, c) == 1) return true;
             else if (ori(a, b, c) == 0) return dist(a, c) > dist(a, b);
             return false;
         }
@@ -89,7 +89,7 @@ namespace CGAlgorithms.Algorithms.ConvexHull
                     a = (a + 1 + L.Count) % L.Count;
                     f = true;
                 }
-                while (ccw(L[a], R[b], R[(b- 1 + R.Count) % R.Count]))
+                while (ccw(L[a], R[b], R[(b - 1 + R.Count) % R.Count]))
                 {
                     b = (b - 1 + R.Count) % R.Count;
                     f = true;
@@ -118,7 +118,7 @@ namespace CGAlgorithms.Algorithms.ConvexHull
             var U = getUpperTanget(lHull, rHull);
             var D = getLowerTanget(lHull, rHull);
 
-           
+
             for (int i = D.Item2; ; i = (i + 1) % rHull.Count)
             {
                 ret.Add(rHull[i]);
@@ -130,13 +130,11 @@ namespace CGAlgorithms.Algorithms.ConvexHull
                 ret.Add(lHull[i]);
                 if (i == D.Item1) break;
             }
-           
+
             return new List<Point>(ret);
         }
         public override void Run(List<Point> points, List<Line> lines, List<Polygon> polygons, ref List<Point> outPoints, ref List<Line> outLines, ref List<Polygon> outPolygons)
         {
-
-
             points = points.OrderBy(point => point.X).ThenBy(point => point.Y).ToList();
 
             List<Point> temp = new List<Point>();
@@ -147,9 +145,14 @@ namespace CGAlgorithms.Algorithms.ConvexHull
             }
 
             points = temp;
-
             outPoints = hull(points);
 
+            for (int i = 0; i < outPoints.Count; i++)
+            {
+                outLines.Add(new Line(outPoints[i], outPoints[(i + 1) % outPoints.Count]));
+            }
+
+            outPolygons.Add(new Polygon(outLines));
         }
 
         public override string ToString()
